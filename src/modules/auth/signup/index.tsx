@@ -17,6 +17,7 @@ import {
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import images from '../../../assets/images';
 import {doSignUp} from '../actions';
+import Loader from '../../../components/loader';
 
 const Login = () => {
   const dispatch = useDispatch<any>();
@@ -26,8 +27,8 @@ const Login = () => {
   const [name, setName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const checked = name && firstName && lastName && password;
 
@@ -40,7 +41,7 @@ const Login = () => {
   };
 
   const onSignUp = () => {
-    console.log('SignUp');
+    setLoading(true);
     const payload = {
       userName: name,
       firstName,
@@ -52,6 +53,7 @@ const Login = () => {
       doSignUp(payload, res => {
         if (res.isSuccess) {
           // navigation.goBack();
+          setLoading(false);
           Alert.alert(
             '',
             'Your account has been created. Please sign in to continue',
@@ -61,11 +63,10 @@ const Login = () => {
                 onPress: () => {
                   navigation.goBack();
                 },
-                style: 'done',
               },
             ],
           );
-        }
+        } else setLoading(false);
       }),
     );
   };
@@ -150,6 +151,7 @@ const Login = () => {
           <Text>{'Log In'}</Text>
         </TouchableOpacity>
       </View>
+      {loading && <Loader isVisible={loading} spinnerColor={colors.purple} />}
     </KeyboardAwareScrollView>
   );
 };
